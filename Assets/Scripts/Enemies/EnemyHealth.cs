@@ -23,6 +23,7 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
+        GameManager.Instance.RegisterKill();
         Debug.Log("Enemy Died");
         Destroy(gameObject);
     }

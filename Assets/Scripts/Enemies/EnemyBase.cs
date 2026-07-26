@@ -19,11 +19,12 @@ public class EnemyBase : MonoBehaviour
         }
     }
 
-    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            Debug.Log("Enemy has hit the Player.");
+            collision.GetComponent<PlayerHealth>()?.TakeDamage(25);
+            Debug.Log("Enemy succesfully collided with the player.");
         }
     }
 }
