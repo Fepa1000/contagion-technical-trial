@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,6 +30,8 @@ public class EnemySpawner : MonoBehaviour
     public GameObject enemyFastPrefab;
     public GameObject enemyTankPrefab;
 
+    public static event Action<int> OnWaveChanged;
+
     private Wave[] waves;
     private int currentWaveIndex = 0;
 
@@ -38,12 +41,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        if (winScreenImage != null)
-        {
-            Color c = winScreenImage.color;
-            c.a = 0f; // Alpha set to 0 (fully transparent)
-            winScreenImage.color = c;
-        }
+        
         GameManager.Instance.OnKillCountChanged += OnEnemyKilled;
 
         waves = new Wave[3];
@@ -85,16 +83,18 @@ public class EnemySpawner : MonoBehaviour
         for (int i = 0; i < currentWave.normalCount; i++) enemiesToSpawn.Add(enemyPrefab);
         for (int i = 0; i < currentWave.fastCount; i++) enemiesToSpawn.Add(enemyFastPrefab);
         for (int i = 0; i < currentWave.tankCount; i++) enemiesToSpawn.Add(enemyTankPrefab);
+
+        OnWaveChanged?.Invoke(currentWaveIndex + 1);
     }
 
     void SpawnEnemy()
     {
-        int randomIndex = Random.Range(0, enemiesToSpawn.Count);
+        int randomIndex = UnityEngine.Random.Range(0, enemiesToSpawn.Count);
         GameObject enemyToSpawn = enemiesToSpawn[randomIndex];
 
         enemiesToSpawn.RemoveAt(randomIndex);
 
-        Vector2 spawnPos = (Vector2)player.position + Random.insideUnitCircle.normalized * spawnRadius;
+        Vector2 spawnPos = (Vector2)player.position + UnityEngine.Random.insideUnitCircle.normalized * spawnRadius;
         Instantiate(enemyToSpawn, spawnPos, Quaternion.identity);
     }
 
@@ -114,15 +114,6 @@ public class EnemySpawner : MonoBehaviour
             else
             {
                 Debug.Log("You win!");
-
-                if (winScreenImage != null)
-                {
-                    Color c = winScreenImage.color;
-                    c.a = 0.5f; 
-                    winScreenImage.color = c;
-                }
-
-                Time.timeScale = 0f;
             }
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI; 
 public class PlayerHealth : MonoBehaviour
@@ -9,9 +10,13 @@ public class PlayerHealth : MonoBehaviour
     [Header("Death UI")]
     public Image deathScreen;
 
+    public static event Action<int> OnHealthChanged;
+
     void Start()
     {
         currentHealth = maxHealth;
+
+        OnHealthChanged?.Invoke(currentHealth);
 
         // This makes the death screen invisible when the game starts
         if (deathScreen != null)
@@ -26,6 +31,8 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth -= amount;
         Debug.Log("You got hit! Current Health: " + currentHealth);
+
+        OnHealthChanged?.Invoke(currentHealth);
 
         if (currentHealth <= 0)
         {
