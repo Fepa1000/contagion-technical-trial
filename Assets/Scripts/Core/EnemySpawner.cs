@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Wave
 {
@@ -10,8 +11,14 @@ public class Wave
     public int TotalEnemies => normalCount + fastCount + tankCount;
 }
 
+
+
 public class EnemySpawner : MonoBehaviour
 {
+    [Header("Victory UI")]
+    public Image winScreenImage;
+
+
     [Header("Spawner Settings")]
     public Transform player;
     public float spawnInterval = 2f;
@@ -31,6 +38,12 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
+        if (winScreenImage != null)
+        {
+            Color c = winScreenImage.color;
+            c.a = 0f; // Alpha set to 0 (fully transparent)
+            winScreenImage.color = c;
+        }
         GameManager.Instance.OnKillCountChanged += OnEnemyKilled;
 
         waves = new Wave[3];
@@ -101,6 +114,15 @@ public class EnemySpawner : MonoBehaviour
             else
             {
                 Debug.Log("You win!");
+
+                if (winScreenImage != null)
+                {
+                    Color c = winScreenImage.color;
+                    c.a = 0.5f; 
+                    winScreenImage.color = c;
+                }
+
+                Time.timeScale = 0f;
             }
         }
     }
